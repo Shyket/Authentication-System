@@ -1,4 +1,4 @@
-const mongoose = require(mongoose);
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
@@ -14,7 +14,7 @@ const UserSchema = new Schema({
     required: [true, "username is required"],
   },
 
-  gneder: {
+  gender: {
     type: String,
     enum: ["male", "female", "3rd gender"],
     required: [true, "gender is required"],
@@ -22,9 +22,10 @@ const UserSchema = new Schema({
 
   password: {
     type: String,
-    required: [true,"password is required"],
+    required: [true, "password is required"],
     max: 16,
   },
 });
+
 
 module.exports = mongoose.model("Users", UserSchema);

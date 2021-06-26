@@ -1,9 +1,16 @@
 const express = require("express");
 const app = express();
 const database = require("./Utils/database");
-
 require("dotenv").config();
-database();
+
+database()
+  .then(() => {
+    console.log("Database connection established successfully");
+  })
+  .catch((error) => {
+    console.log("Database connection error. Error Message: -- " + error);
+    process.exit();
+  });
 
 // for parsing application/json
 app.use(express.json());

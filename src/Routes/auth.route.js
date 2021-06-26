@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 const validationResult = require("../Middleware/validateRequest");
+const {signup,login} = require("../Controller/auth.controller");
+
 router.get("/", (req, res) => {
   res.status(200).send("<h1>Hello</h1>");
 });
@@ -44,9 +46,7 @@ router.post(
       .withMessage("confirm password must match with password"),
   ],
   validationResult,
-  (req, res) => {
-    res.status(200).send("signup successfully");
-  }
+  signup
 );
 
 router.post(
@@ -63,9 +63,7 @@ router.post(
       .withMessage("password cant be empty"),
   ],
   validationResult,
-  (req, res) => {
-    res.status(200).send("login successfully");
-  }
+  login
 );
 
 module.exports = router;
