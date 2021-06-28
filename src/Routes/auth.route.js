@@ -2,18 +2,35 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 const validationResult = require("../Middleware/validateRequest");
-const {signup,login} = require("../Controller/auth.controller");
+const { signup, login } = require("../Controller/auth.controller");
+var path = require("path");
 
 router.get("/", (req, res) => {
-  res.status(200).send("<h1>Hello</h1>");
+  res
+    .status(200)
+    .send(path.join(__dirname, "../../AdminLTE-master", "index3.html"));
 });
 
 router.get("/login", (req, res) => {
-  res.status(200).send("<h1>Login Page</h1>");
+  res
+    .status(200)
+    .render(
+      path.join(
+        __dirname,
+        "../../AdminLTE-master/pages/examples",
+        "login-v2"
+      )
+    );
 });
 
 router.get("/signup", (req, res) => {
-  res.status(200).send("<h1>Signup Page</h1>");
+  res.render(
+    path.join(
+      __dirname,
+      "../../AdminLTE-master/pages/examples",
+      "register"
+    )
+  );
 });
 
 router.post(
