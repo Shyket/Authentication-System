@@ -1,6 +1,7 @@
 const User = require("../Model/user.model");
 const { comparePassword, hashPassword } = require("../Utils/bcrypt");
 const { generateToken, authenticateToken } = require("../Utils/jwt");
+var path = require("path");
 
 exports.signup = async (req, res) => {
   try {
@@ -17,7 +18,8 @@ exports.signup = async (req, res) => {
     console.log(password);
     user = new User({ email, password, gender, username });
     await user.save();
-    res.status(200).json({ error: false, user: { email, gender, username } });
+    //res.json({ error: false, user: { email, gender, username } });
+    res.status(200).redirect("/auth/login");
   } catch (err) {
     res.status(402).json({ error: err.message });
   }
@@ -44,7 +46,18 @@ exports.login = async (req, res) => {
     }
     const token = await generateToken(user);
 
-    res.status(200).json({ jwt: token });
+    res.cookie("authorization", token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    res.cookie("username", user.username, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+    
+    res.redirect("/deshboard");
+  
   } catch (err) {
     res.status(402).json({ error: err.message });
   }
@@ -52,25 +65,20 @@ exports.login = async (req, res) => {
 
 exports.isAuthenticated = async (req, res, next) => {
   try {
-    const token = extractHeader(req);
+    const token = req.cookies.authorization;
 
     if (token == null) {
-      return res.status(402).json({
+      res.status(402).json({
         error: { authorization: "Access Denied! Unauthorized Access" },
       });
+      return res.redirect("/auth/login");
     }
 
     const data = await authenticateToken(token);
     //console.log(data._doc._id);
     req.userID = data._doc._id;
     next();
-  } catch (error) {
+  } catch (err) {
     res.status(402).json({ error: err.message });
   }
-};
-
-const extractHeader = (req) => {
-  const token = req.headers["authorization"];
-
-  return token;
 };
